@@ -147,17 +147,20 @@ done
     vi /etc/yum.repos.d/nginx.repo
 写入：
 
-[nginx]
-name=nginx repo
-baseurl=http://nginx.org/packages/centos/7/$basearch/
-gpgcheck=0
-enabled=1
+    [nginx]
+    name=nginx repo
+    baseurl=http://nginx.org/packages/centos/7/$basearch/
+    gpgcheck=0
+    enabled=1
+    
 用yum安装：
 
     yum -y install nginx
+    
 进入到Nginx的默认站点目录：
 
     cd /usr/share/nginx/html
+    
 下载AriaNG并解压：
 
     wget https://github.com/mayswind/AriaNg/releases/download/0.4.0/aria-ng-0.4.0.zip
@@ -186,27 +189,29 @@ OK，再让我们来安装一个filebrowser，用来管理我们的网盘文件�
 新建一个服务文件：
 
     vi /usr/lib/systemd/system/filebrowser.service
+    
 写入：
 
-[Unit]
-Description=filebrowser
+    [Unit]
+    Description=filebrowser
     
-[Service]
-User=root
-ExecStart=/usr/bin/filebrowser --port 2333
-Restart=on-abort
+    [Service]
+    User=root
+    ExecStart=/usr/bin/filebrowser --port 2333
+    Restart=on-abort
     
-[Install]
-WantedBy=multi-user.target
+    [Install]
+    WantedBy=multi-user.target
+    
 其中2333为端口 如果是宝塔需要在安全里放行，还有6800端口，为aria2需要使用的端口，也要放行。
 
 管理命令：
 
-systemctl enable filebrowser
-systemctl start filebrowser
-systemctl status filebrowser
-systemctl restart filebrowser
-systemctl stop filebrowser
+     systemctl enable filebrowser
+     systemctl start filebrowser
+     systemctl status filebrowser
+     systemctl restart filebrowser
+     systemctl stop filebrowser
 注：1是开机启动，2是现在运行，3是查看运行状态，4是重启，5是停止运行。
 
 默认的管理员账号密码都是admin，登录进去的第一件事就是把密码修改掉。接着我们要改变一下目录指定的路径为刚刚设置的挂载盘/marisn/gdrive。
