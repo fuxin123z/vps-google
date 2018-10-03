@@ -22,7 +22,6 @@ Rclone挂载
     ./rclone config
     
 第一步选择n，然后回车输入一个name，建议这个name设置的简单好记一点，如图所示： 
-
     ![image](https://github.com/suiyuan2012/img-folder/raw/master/3494175083.png)
     
 然后选择我们要挂载的类型，这里选择11，切记要选对了：
