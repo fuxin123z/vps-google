@@ -30,69 +30,77 @@ Rclone挂载
     ![image](https://github.com/suiyuan2012/img-folder/raw/master/3158608624.png)
 
 现在rclone会在终端内给我们回显一个GoogleDrive的授权登录地址，如图所示：
+    ![image](https://github.com/suiyuan2012/img-folder/raw/master/804192371.png)
 
-lala.im_2018-03-14-08-7814.png
 我们复制这个地址然后用本地电脑的浏览器打开并登录（需翻墙），然后点击允许按钮，接着复制如下图所示的授权代码：
+    ![image](https://github.com/suiyuan2012/img-folder/raw/master/3887021201.png)
 
-lala.im_2018-03-14-25-204.png
 回到终端内粘贴授权代码然后回车，继续按如下图操作，依次输入n、y、q：
 
 全部完成后，现在新建一个你要挂载的目录：
 
-mkdir -p /marisn/gdrive
+    mkdir -p /marisn/gdrive
+    
 先把rclone的可执行文件复制到/usr/bin：
 
-cp /root/rclone-v1.42-linux-amd64/rclone /usr/bin/rclone
+    cp /root/rclone-v1.42-linux-amd64/rclone /usr/bin/rclone
+    
 新建一个rclone.service文件：
 
 vi /usr/lib/systemd/system/rclone.service
+
 写入：
 
-[Unit]
-Description=rclone
+    [Unit]
+    Description=rclone
     
-[Service]
-User=root
-ExecStart=/usr/bin/rclone mount marisn: /marisn/gdrive --allow-other --allow-non-empty --vfs-cache-mode writes
-Restart=on-abort
+    [Service]
+    User=root
+    ExecStart=/usr/bin/rclone mount marisn: /marisn/gdrive --allow-other --allow-non-empty --vfs-cache-mode writes
+    Restart=on-abort
     
-[Install]
-WantedBy=multi-user.target
+    [Install]
+    WantedBy=multi-user.target
 重载daemon，让新的服务文件生效：
 
-systemctl daemon-reload
+    systemctl daemon-reload
+    
 现在就可以用systemctl来启动rclone了：
 
-systemctl start rclone
+    systemctl start rclone
 设置开机启动：
 
-systemctl enable rclone
+    systemctl enable rclone
 停止、查看状态可以用：
 
-systemctl stop rclone
-systemctl status rclone
+    systemctl stop rclone
+    systemctl status rclone
+
 重启你的VPS，然后查看一下rclone的服务起来没，接着查看一下盘子挂上去没：
 
-reboot
-systemctl status rclone
-df -h
+    reboot
+    systemctl status rclone
+    df -h
+
 哎呀妈呀，才把挂载copy完就这么多了，接下来讲如何利用aria2离线下载自动上传到谷歌云盘
 
 装依赖和组件：
 
-yum -y install wget screen unzip gcc gcc-c++ openssl-devel
+    yum -y install wget screen unzip gcc gcc-c++ openssl-devel
+    
 安装Aria2（CentOS6要升级GCC，7可以直接装）：
 
-cd /root
-wget https://github.com/aria2/aria2/releases/download/release-1.33.1/aria2-1.33.1.tar.gz
-tar xzvf aria2-1.33.1.tar.gz
-cd aria2-1.33.1
-./configure
-make
-make install
+    cd /root
+    wget https://github.com/aria2/aria2/releases/download/release-1.33.1/aria2-1.33.1.tar.gz
+    tar xzvf aria2-1.33.1.tar.gz
+    cd aria2-1.33.1
+    ./configure
+    make
+    make install
 Aria2安装好后，我们在root目录下新建一个脚本文件，命名为autoupload.sh：
 
-vi /root/autoupload.sh
+    vi /root/autoupload.sh
+
 写入：
 
 #!/bin/bash
@@ -115,27 +123,28 @@ elif [ "$path" = "$downloadpath" ]
     exit 0
 fi
 done
+
 给脚本执行权限：
 
-chmod +x /root/autoupload.sh
+    chmod +x /root/autoupload.sh
 现在我们就可以启动aria2了：
 
-aria2c --enable-rpc --rpc-listen-all --rpc-allow-origin-all --rpc-secret=marisn --on-download-complete=/root/autoupload.sh -c --dir /root/downloads -D
-–rpc-secret=后面的值务必修改复杂一点，这是你的rpc连接密码！如果不设置或这个值设置的很容易被人猜到，会出现严重安全问题。
+    aria2c --enable-rpc --rpc-listen-all --rpc-allow-origin-all --rpc-secret=marisn --on-download-complete=/root/autoupload.sh -c --dir /root/downloads -D
+1、–rpc-secret=后面的值务必修改复杂一点，这是你的rpc连接密码！如果不设置或这个值设置的很容易被人猜到，会出现严重安全问题。
 
-–on-download-complete=后面要指定执行脚本的路径，如果你的脚本路径不一样这里要做相应更改。
+2、–on-download-complete=后面要指定执行脚本的路径，如果你的脚本路径不一样这里要做相应更改。
 
-–dir后面的下载路径务必要和之前脚本内的下载路径一致。
+3、–dir后面的下载路径务必要和之前脚本内的下载路径一致。
 
 将aria2加入自启【如果你的centos支持的话】：
 
-echo "aria2c --enable-rpc --rpc-listen-all --rpc-allow-origin-all --rpc-secret=marisn --on-download-complete=/root/autoupload.sh -c --dir /root/downloads -D" >> /etc/rc.local
-chmod +x /etc/rc.d/rc.local
+    echo "aria2c --enable-rpc --rpc-listen-all --rpc-allow-origin-all --rpc-secret=marisn --on-download-complete=/root/autoupload.sh -c --dir /root/downloads -D" >> /etc/rc.local
+    chmod +x /etc/rc.d/rc.local
 现在来安装AriaNG。
 
 先要安装一个Nginx：
 
-vi /etc/yum.repos.d/nginx.repo
+    vi /etc/yum.repos.d/nginx.repo
 写入：
 
 [nginx]
@@ -145,19 +154,19 @@ gpgcheck=0
 enabled=1
 用yum安装：
 
-yum -y install nginx
+    yum -y install nginx
 进入到Nginx的默认站点目录：
 
-cd /usr/share/nginx/html
+    cd /usr/share/nginx/html
 下载AriaNG并解压：
 
-wget https://github.com/mayswind/AriaNg/releases/download/0.4.0/aria-ng-0.4.0.zip
-unzip aria-ng-0.4.0.zip
+    wget https://github.com/mayswind/AriaNg/releases/download/0.4.0/aria-ng-0.4.0.zip
+    unzip aria-ng-0.4.0.zip
 注意有一个同名文件直接按y覆盖就行
 
 启动Nginx：
 
-systemctl start nginx
+    systemctl start nginx
 现在打开你的VPS公网IP就能访问到AriaNG了。先填写rpc连接密码，让AriaNG和Aria2连接上
 
 注意：如果你不想单纯的浪费这台机子，可以像我一样搭建宝塔面板，然后AriaNG部分参考 [教程]Aria2离线下载+H5ai在线观看 中的教程
@@ -166,17 +175,17 @@ OK，再让我们来安装一个filebrowser，用来管理我们的网盘文件�
 
 下载并解压filebrowser：
 
-cd /root
-wget https://github.com/filebrowser/filebrowser/releases/download/v1.9.0/linux-amd64-filebrowser.tar.gz
-tar -zxvf linux-amd64-filebrowser.tar.gz
+    cd /root
+    wget https://github.com/filebrowser/filebrowser/releases/download/v1.9.0/linux-amd64-filebrowser.tar.gz
+    tar -zxvf linux-amd64-filebrowser.tar.gz
 写个服务，让filebrowser开机启动。
 
 先复制可执行文件到/usr/bin：
 
-cp /root/filebrowser /usr/bin/filebrowser
+    cp /root/filebrowser /usr/bin/filebrowser
 新建一个服务文件：
 
-vi /usr/lib/systemd/system/filebrowser.service
+    vi /usr/lib/systemd/system/filebrowser.service
 写入：
 
 [Unit]
@@ -211,7 +220,8 @@ systemctl stop filebrowser
 后续再说说吧，那个filebrowser有些视频不支持在线直接从它那里面看，小技巧就是复制下载链接，拷贝到
 
 https://tools.67cc.cn/m3u8.php?url=[视频地址]
-Snipaste_2018-07-30_10-29-59.png
+     ![image](https://github.com/suiyuan2012/img-folder/raw/master/872004677.png)
+     
 2018年7月30日18:02:54
 
 再补充一些技巧：
@@ -221,8 +231,8 @@ Snipaste_2018-07-30_10-29-59.png
 什么？你不是很懂反代？
 
 那接下来我给你简单演示一下，字不重要看图
+     ![image](https://github.com/suiyuan2012/img-folder/raw/master/4099127049.png)
 
-Snipaste_2018-07-30_18-06-54.png
 在使用过程中，我觉得filebrowser看小姐姐不安逸，我还是换一个WEB文件浏览器吧
 
 宝塔新建网站，下载KODExplorer到目录
@@ -232,8 +242,8 @@ https://kodcloud.com/download/
 解压后安装即可
 
 由于宝塔默认开启防跨站，只需要关闭即可。
-
-Snipaste_2018-07-30_18-41-53.png
+     ![image](https://github.com/suiyuan2012/img-folder/raw/master/321789734 .png)
+     
 这样你才能访问设置的谷歌挂载盘
-
-Snipaste_2018-07-30_18-37-15.png
+      ![image](https://github.com/suiyuan2012/img-folder/raw/master/4286281200.png)
+      
