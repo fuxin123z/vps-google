@@ -27,8 +27,8 @@ Rclone挂载
 然后选择我们要挂载的类型，这里选择11，切记要选对了：
 
 接着client_id、client_secret、service_account_file都留空直接回车，Scope that rclone should use when requesting access from drive.Choose a number from below, or type in your own value这里选择1，root_folder_id留空回车，Use auto config?这里我们选择n，如图所示：
+    ![image](https://github.com/suiyuan2012/img-folder/raw/master/3158608624.png)
 
-lala.im_2018-03-14-20-5013.png
 现在rclone会在终端内给我们回显一个GoogleDrive的授权登录地址，如图所示：
 
 lala.im_2018-03-14-08-7814.png
