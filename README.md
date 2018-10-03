@@ -6,20 +6,23 @@ Rclone挂载
 安装EPEL源：
 
     yum -y install epel-release
+    
 安装一些基本组件和依赖：
 
     yum -y install wget unzip screen fuse fuse-devel
+    
 下载Rclone解压然后进入目录：
 
-cd /root && wget https://downloads.rclone.org/v1.42/rclone-v1.42-linux-amd64.zip
-unzip rclone-v1.42-linux-amd64.zip
-cd rclone-v1.42-linux-amd64
+    cd /root && wget https://downloads.rclone.org/v1.42/rclone-v1.42-linux-amd64.zip
+    unzip rclone-v1.42-linux-amd64.zip
+    cd rclone-v1.42-linux-amd64
+    
 运行Rclone开始配置：
 
-./rclone config
+    ./rclone config
+    
 第一步选择n，然后回车输入一个name，建议这个name设置的简单好记一点，如图所示：
-
-lala.im_2018-03-14-24-0471.png
+![Image text](https://raw.githubusercontent.com/suiyuan2012/img-folder/master/3494175083.png）
 然后选择我们要挂载的类型，这里选择11，切记要选对了：
 
 接着client_id、client_secret、service_account_file都留空直接回车，Scope that rclone should use when requesting access from drive.Choose a number from below, or type in your own value这里选择1，root_folder_id留空回车，Use auto config?这里我们选择n，如图所示：
