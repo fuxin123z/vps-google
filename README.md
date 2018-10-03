@@ -1,9 +1,9 @@
 vps挂载谷歌无限云盘
 =========
 
-首先，我是准备将谷歌云盘先挂载到我的阿里云上，下面是copy摘抄的教程，嘻嘻
+### 首先，我是准备将谷歌云盘先挂载到我的阿里云上，下面是copy摘抄的教程，嘻嘻 ###
 
-Rclone挂载
+#### Rclone挂载 ####
 
 安装EPEL源：
 
@@ -84,7 +84,7 @@ vi /usr/lib/systemd/system/rclone.service
     systemctl status rclone
     df -h
 
-哎呀妈呀，才把挂载copy完就这么多了，接下来讲如何利用aria2离线下载自动上传到谷歌云盘
+#### 哎呀妈呀，才把挂载copy完就这么多了，接下来讲如何利用aria2离线下载自动上传到谷歌云盘 ####
 
 装依赖和组件：
 
@@ -142,7 +142,7 @@ Aria2安装好后，我们在root目录下新建一个脚本文件，命名为au
 
     echo "aria2c --enable-rpc --rpc-listen-all --rpc-allow-origin-all --rpc-secret=marisn --on-download-complete=/root/autoupload.sh -c --dir /root/downloads -D" >> /etc/rc.local
     chmod +x /etc/rc.d/rc.local
-现在来安装AriaNG。
+#### 现在来安装AriaNG ####
 
 先要安装一个Nginx：
 
@@ -176,7 +176,7 @@ Aria2安装好后，我们在root目录下新建一个脚本文件，命名为au
 
 注意：如果你不想单纯的浪费这台机子，可以像我一样搭建宝塔面板，然后AriaNG部分参考 [教程]Aria2离线下载+H5ai在线观看 中的教程
 
-OK，再让我们来安装一个filebrowser，用来管理我们的网盘文件和实现在线播放视频等需求。
+##### OK，再让我们来安装一个filebrowser，用来管理我们的网盘文件和实现在线播放视频等需求 ####
 
 下载并解压filebrowser：
 
