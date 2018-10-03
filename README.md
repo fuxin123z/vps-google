@@ -103,27 +103,27 @@ Aria2安装好后，我们在root目录下新建一个脚本文件，命名为au
 
 写入：
 
-#!/bin/bash
-path=$3
-downloadpath='/root/downloads' #此处/root/downloads为aria2下载时默认下载目录 自行更改
-if [ $2 -eq 0 ]
+    #!/bin/bash
+    path=$3
+    downloadpath='/root/downloads' #此处/root/downloads为aria2下载时默认下载目录 自行更改
+    if [ $2 -eq 0 ]
+          then
+                  exit 0
+    fi
+    while true; do
+    filepath=$path
+    path=${path%/*}; 
+    if [ "$path" = "$downloadpath" ] && [ $2 -eq 1 ]
         then
-                exit 0
-fi
-while true; do
-filepath=$path
-path=${path%/*}; 
-if [ "$path" = "$downloadpath" ] && [ $2 -eq 1 ]
-    then
-    rclone move "$filepath" /marisn/gdrive    #你设置的谷歌挂载目录 自行更改
-    exit 0
-elif [ "$path" = "$downloadpath" ]
-    then
-    mv "$filepath"/ /marisn/gdrive/"${filepath##*/}"/  #你设置的谷歌挂载目录 自行更改
-    exit 0
-fi
-done
-
+        rclone move "$filepath" /marisn/gdrive    #你设置的谷歌挂载目录 自行更改
+        exit 0
+    elif [ "$path" = "$downloadpath" ]
+        then
+        mv "$filepath"/ /marisn/gdrive/"${filepath##*/}"/  #你设置的谷歌挂载目录 自行更改
+        exit 0
+    fi
+    done
+  
 给脚本执行权限：
 
     chmod +x /root/autoupload.sh
